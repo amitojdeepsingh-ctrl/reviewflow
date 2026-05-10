@@ -25,6 +25,8 @@ export default function CustomersPage() {
   const [sentTo, setSentTo] = useState<string[]>([]);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [newCustomer, setNewCustomer] = useState({ name: "", phone: "", email: "", address: "", notes: "" });
+  const [adding, setAdding] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (user) fetchCustomers();
@@ -41,7 +43,12 @@ export default function CustomersPage() {
   }
 
   async function addCustomer() {
-    if (!user || !newCustomer.name) return;
+    if (!user || !newCustomer.name) {
+      setError("Please enter a name");
+      return;
+    }
+    setAdding(true);
+    setError("");
     
     const { error } = await supabase.from("customers").insert({
       user_id: user.id,
@@ -52,11 +59,14 @@ export default function CustomersPage() {
       notes: newCustomer.notes || null,
     });
 
-    if (!error) {
+    if (error) {
+      setError(error.message);
+    } else {
       fetchCustomers();
       setShowAddDialog(false);
       setNewCustomer({ name: "", phone: "", email: "", address: "", notes: "" });
     }
+    setAdding(false);
   }
 
   async function sendReviewRequest(customerId: string, method: "sms" | "email" = "sms") {
@@ -92,7 +102,7 @@ export default function CustomersPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Customers</h1>
-          <p className="text-slate-500 mt-1">Manage your ADS Immigration customers</p>
+          <p className="text-slate-500 mt-1">Manage your customers</p>
         </div>
         <Button onClick={() => setShowAddDialog(true)} className="bg-indigo-600 hover:bg-indigo-700">
           <Plus className="w-4 h-4 mr-2" />
@@ -283,10 +293,12 @@ export default function CustomersPage() {
               <Button variant="outline" onClick={() => setShowAddDialog(false)} className="flex-1">
                 Cancel
               </Button>
-              <Button onClick={addCustomer} className="flex-1 bg-indigo-600">
-                Add Customer
+              <Button onClick={addCustomer} disabled={adding} className="flex-1 bg-indigo-600">
+                {adding ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                {adding ? "Adding..." : "Add Customer"}
               </Button>
             </div>
+            {error && <p className="text-sm text-red-600 mt-2">{error}</p>}
           </div>
         </div>
       )}
