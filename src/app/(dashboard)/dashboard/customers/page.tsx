@@ -74,7 +74,8 @@ export default function CustomersPage() {
     setError("");
     try {
       console.log("Sending request for customer:", customerId);
-      const res = await fetch("/api/send-review-request", {
+      // Use test-post endpoint to debug
+      const res = await fetch("/api/test-post", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ customerId, method }),
