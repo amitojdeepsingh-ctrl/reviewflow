@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star, Search, Filter, MoreHorizontal, ExternalLink, AlertTriangle, CheckCircle, Clock, Loader2 } from "lucide-react";
+import { Star, Search, Filter, MoreHorizontal, ExternalLink, AlertTriangle, CheckCircle, Clock, Loader2, MessageCircle } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 interface Review {
