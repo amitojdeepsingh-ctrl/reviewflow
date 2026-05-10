@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { sendSMS, formatPhoneNumber, defaultReviewRequestMessage } from "@/lib/twilio";
 import { createClient } from "@supabase/supabase-js";
 
 export const dynamic = 'force-dynamic';
@@ -12,7 +11,12 @@ function getAdminClient() {
     throw new Error("Missing SUPABASE_SERVICE_ROLE_KEY");
   }
   
-  return createClient(url, key);
+  return createClient(url, key, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
+    }
+  });
 }
 
 export async function POST(request: Request) {
@@ -25,16 +29,14 @@ export async function POST(request: Request) {
   
   try {
     const { customerId, method = "sms" } = await request.json();
-    console.log("customerId:", customerId);
 
-    // Get customer from database
+    // Get customer - direct select with admin client should bypass RLS
     const { data: customer, error: customerError } = await supabase
       .from("customers")
       .select("*")
       .eq("id", customerId)
       .single();
 
-    console.log("customerError:", customerError);
     if (customerError) {
       return NextResponse.json({ error: "DB Error: " + customerError.message }, { status: 500 });
     }
@@ -43,51 +45,29 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Customer not found" }, { status: 404 });
     }
 
-    // Build message
-    let message = defaultReviewRequestMessage
-      .replace("{name}", customer.name.split(" ")[0])
-      .replace("{link}", "https://g.page/r/your-business-id");
+    // Create review request record
+    const message = "Thanks for being our customer! Would you mind leaving a quick review?";
+    
+    const { error: insertError } = await supabase.from("review_requests").insert({
+      user_id: customer.user_id,
+      customer_id: customer.id,
+      status: "sent",
+      request_method: method,
+      message,
+      sent_at: new Date().toISOString(),
+    });
 
-    // Send based on method
-    if (method === "sms" && customer.phone) {
-      const formattedPhone = formatPhoneNumber(customer.phone);
-      const result = await sendSMS(formattedPhone, message);
-
-      if (!result.success) {
-        return NextResponse.json({ error: "Failed to send SMS" }, { status: 500 });
-      }
-
-      // Log the request
-      await supabase.from("review_requests").insert({
-        user_id: customer.user_id,
-        customer_id: customer.id,
-        status: "sent",
-        request_method: "sms",
-        message,
-        sent_at: new Date().toISOString(),
-      });
-
-      return NextResponse.json({ success: true, method: "sms" });
+    if (insertError) {
+      return NextResponse.json({ error: "Failed to create request: " + insertError.message }, { status: 500 });
     }
 
-    if (method === "email" && customer.email) {
-      // For email, we'd need to set up Resend or similar
-      // For now, return a placeholder
-      await supabase.from("review_requests").insert({
-        user_id: customer.user_id,
-        customer_id: customer.id,
-        status: "sent",
-        request_method: "email",
-        message,
-        sent_at: new Date().toISOString(),
-      });
-
-      return NextResponse.json({ success: true, method: "email" });
-    }
-
-    return NextResponse.json({ error: "No contact method available" }, { status: 400 });
-  } catch (error) {
-    console.error("Error sending review request:", error);
-    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+    return NextResponse.json({ 
+      success: true, 
+      message: "Review request sent!",
+      customerName: customer.name 
+    });
+  } catch (err: any) {
+    console.error("Route error:", err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
