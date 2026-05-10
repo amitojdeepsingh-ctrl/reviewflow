@@ -74,11 +74,9 @@ export default function CustomersPage() {
     setError("");
     try {
       console.log("Sending request for customer:", customerId);
-      // Use test-post endpoint to debug
-      const res = await fetch("/api/test-post", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customerId, method }),
+      // Use test endpoint to debug
+      const res = await fetch("/api/test?customerId=" + customerId, {
+        method: "GET",
       });
       console.log("Response status:", res.status);
       const data = await res.json();
@@ -86,6 +84,8 @@ export default function CustomersPage() {
       if (res.ok) {
         setSentTo([...sentTo, customerId]);
         setTimeout(() => setSentTo(sentTo.filter(id => id !== customerId)), 3000);
+        setError("Success! Request sent.");
+        setTimeout(() => setError(""), 3000);
       } else {
         setError(`Error (${res.status}): ${data.error || "Failed to send"}`);
       }
