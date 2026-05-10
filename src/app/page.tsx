@@ -63,9 +63,9 @@ export default function LandingPage() {
           </p>
           
           <div className="flex items-center justify-center gap-4 mt-12 animate-fade-in stagger-3">
-            <Link href="/dashboard">
+            <Link href="/signup">
               <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700 text-lg px-8 h-14 shadow-xl shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all">
-                Start Free Trial
+                Get 50% Off — $19/month
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </Link>
@@ -172,18 +172,19 @@ export default function LandingPage() {
               <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
               
               <div className="relative">
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/20 rounded-full text-sm font-medium">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-500/80 rounded-full text-sm font-medium animate-pulse">
                   <Zap className="w-4 h-4" />
-                  Most Popular
+                  50% OFF — Limited Time
                 </div>
                 
                 <p className="text-indigo-100 font-medium mt-6">Pro Plan</p>
                 
-                <div className="flex items-baseline gap-2 mt-4">
-                  <span className="text-6xl font-bold">$39</span>
+                <div className="flex items-baseline gap-3 mt-4">
+                  <span className="text-6xl font-bold">$19</span>
+                  <span className="text-2xl text-indigo-300 line-through">$39</span>
                   <span className="text-indigo-200 text-xl">/month</span>
                 </div>
-                <p className="text-indigo-100/80 text-sm mt-2">billed annually ($468/year)</p>
+                <p className="text-indigo-100/80 text-sm mt-2">billed annually ($228/year — save $240!)</p>
                 
                 <ul className="mt-10 space-y-4">
                   {[
@@ -206,14 +207,14 @@ export default function LandingPage() {
                   ))}
                 </ul>
                 
-                <Link href="/dashboard">
+                <Link href="/signup">
                   <Button className="w-full mt-10 bg-white text-indigo-600 hover:bg-indigo-50 font-semibold text-lg h-14 shadow-lg">
-                    Start Free Trial
+                    Claim 50% Off — 7 Days Left
                   </Button>
                 </Link>
                 
                 <p className="text-center text-indigo-200 text-sm mt-4">
-                  14 days • No credit card • Cancel anytime
+                  Offer ends in 7 days • 14-day free trial • Cancel anytime
                 </p>
               </div>
             </div>
@@ -224,16 +225,21 @@ export default function LandingPage() {
       {/* CTA */}
       <section className="py-24">
         <div className="max-w-4xl mx-auto px-6 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-full text-sm font-medium mb-6">
+            <Zap className="w-4 h-4" />
+            50% OFF — Limited Time Offer
+          </div>
           <h2 className="text-3xl lg:text-4xl font-bold text-slate-900">Ready to get more reviews?</h2>
-          <p className="text-slate-500 mt-4 text-lg">Join 500+ local businesses already growing their reviews</p>
+          <p className="text-slate-500 mt-4 text-lg">Lock in 50% off when you sign up today — only $19/month</p>
           <div className="mt-10">
-            <Link href="/dashboard">
+            <Link href="/signup">
               <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700 text-lg px-10 h-14 shadow-xl shadow-indigo-500/25">
-                Start Your Free Trial
+                Get 50% Off Now
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </Link>
           </div>
+          <p className="text-slate-400 text-sm mt-4">Offer ends in 7 days • 14-day free trial</p>
         </div>
       </section>
 
