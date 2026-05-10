@@ -15,6 +15,7 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
+  const [status, setStatus] = useState("");
   const [business, setBusiness] = useState({
     company_name: "",
     phone: "",
@@ -48,42 +49,29 @@ export default function SettingsPage() {
     }
     setSaving(true);
     setError("");
+    setStatus("Saving...");
     
-    console.log("Saving for user:", user.id);
-    
-    // First try to update, if not exist then insert
+    // Insert or update
     const { error } = await supabase
       .from("profiles")
-      .update({
+      .upsert({
+        id: user.id,
         company_name: business.company_name,
         phone: business.phone,
         address: business.address
-      })
-      .eq("id", user.id);
+      }, { onConflict: 'id' });
     
-    // If update affected 0 rows, insert
     if (error) {
-      console.log("Update error:", error);
-      // Try insert instead
-      const { error: insertError } = await supabase
-        .from("profiles")
-        .insert({
-          id: user.id,
-          company_name: business.company_name,
-          phone: business.phone,
-          address: business.address
-        });
-      
-      if (insertError) {
-        console.log("Insert error:", insertError);
-        setError(insertError.message);
-      } else {
-        setSaved(true);
-        setTimeout(() => setSaved(false), 2000);
-      }
+      console.error("Save error:", error);
+      setError(error.message);
+      setStatus("Failed: " + error.message);
     } else {
       setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
+      setStatus("Saved!");
+      setTimeout(() => {
+        setSaved(false);
+        setStatus("");
+      }, 2000);
     }
     setSaving(false);
   }
@@ -143,6 +131,8 @@ export default function SettingsPage() {
             {saving ? "Saving..." : saved ? "Saved!" : "Save Changes"}
           </Button>
           {error && <p className="text-sm text-red-600 mt-2">{error}</p>}
+          {status && !error && <p className="text-sm text-slate-600 mt-2">{status}</p>}
+          {!user && <p className="text-sm text-amber-600 mt-2">⚠️ Not logged in</p>}
         </CardContent>
       </Card>
 
