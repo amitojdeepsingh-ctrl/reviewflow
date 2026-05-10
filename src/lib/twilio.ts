@@ -4,11 +4,19 @@ const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const twilioPhone = process.env.TWILIO_PHONE_NUMBER;
 
-const client = accountSid && authToken ? twilio(accountSid, authToken) : null;
+function getClient() {
+  if (!accountSid || !authToken) return null;
+  if (!accountSid.startsWith("AC")) {
+    console.warn("Invalid Twilio Account SID format");
+    return null;
+  }
+  return twilio(accountSid, authToken);
+}
 
 export async function sendSMS(to: string, message: string) {
+  const client = getClient();
   if (!client || !twilioPhone) {
-    console.error("Twilio not configured");
+    console.error("Twilio not configured or invalid credentials");
     return { success: false, error: "Twilio not configured" };
   }
 
