@@ -4,11 +4,15 @@ import { createClient } from "@supabase/supabase-js";
 
 export const dynamic = 'force-dynamic';
 
-export async function POST(request: Request) {
-  const supabase = createClient(
+function getAdminClient() {
+  return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.SUPABASE_SERVICE_ROLE_KEY || ""
   );
+}
+
+export async function POST(request: Request) {
+  const supabase = getAdminClient();
   try {
     const { customerId, method = "sms" } = await request.json();
 
