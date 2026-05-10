@@ -3,8 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY ||
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNldGhsdm51dXB4amd3bHlhbWZ5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODM1NjkyNiwiZXhwIjoyMDkzOTMyOTI2fQ.E2TjNtO9g3vZ6jKxY8lW1hQ5nJ4vK2zX9pL3mS8fD0E"
+  process.env.SUPABASE_SERVICE_ROLE_KEY || ""
 );
 
 export async function POST() {
