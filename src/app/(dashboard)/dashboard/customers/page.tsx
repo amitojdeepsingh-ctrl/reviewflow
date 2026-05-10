@@ -71,18 +71,23 @@ export default function CustomersPage() {
 
   async function sendReviewRequest(customerId: string, method: "sms" | "email" = "sms") {
     setSendingTo(customerId);
+    setError("");
     try {
       const res = await fetch("/api/send-review-request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ customerId, method }),
       });
+      const data = await res.json();
       if (res.ok) {
         setSentTo([...sentTo, customerId]);
         setTimeout(() => setSentTo(sentTo.filter(id => id !== customerId)), 3000);
+      } else {
+        setError(data.error || "Failed to send");
       }
-    } catch (error) {
-      console.error("Error:", error);
+    } catch (err) {
+      console.error("Error:", err);
+      setError("Network error");
     } finally {
       setSendingTo(null);
     }
