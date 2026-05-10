@@ -14,6 +14,7 @@ export default function SettingsPage() {
   const { user } = useAuth();
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
   const [business, setBusiness] = useState({
     company_name: "",
     phone: "",
@@ -41,17 +42,24 @@ export default function SettingsPage() {
   }
 
   async function saveProfile() {
+    if (!user) {
+      setError("Please log in first");
+      return;
+    }
     setSaving(true);
+    setError("");
     const { error } = await supabase
       .from("profiles")
       .upsert({
-        id: user?.id,
+        id: user.id,
         company_name: business.company_name,
         phone: business.phone,
         address: business.address
       });
     
-    if (!error) {
+    if (error) {
+      setError(error.message);
+    } else {
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     }
@@ -112,6 +120,7 @@ export default function SettingsPage() {
             {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : saved ? <CheckCircle className="w-4 h-4 mr-2" /> : null}
             {saving ? "Saving..." : saved ? "Saved!" : "Save Changes"}
           </Button>
+          {error && <p className="text-sm text-red-600 mt-2">{error}</p>}
         </CardContent>
       </Card>
 
