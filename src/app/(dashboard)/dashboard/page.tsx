@@ -18,6 +18,7 @@ import {
   AlertTriangle
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 interface Stats {
@@ -29,6 +30,7 @@ interface Stats {
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<Stats>({
     totalCustomers: 0,
@@ -129,7 +131,7 @@ export default function DashboardPage() {
             <ExternalLink className="w-4 h-4" />
             View Live Reviews
           </Button>
-          <Button className="bg-indigo-600 hover:bg-indigo-700 gap-2">
+          <Button className="bg-indigo-600 hover:bg-indigo-700 gap-2" onClick={() => router.push("/dashboard/customers")}>
             <Plus className="w-4 h-4" />
             Add Customer
           </Button>
@@ -148,7 +150,7 @@ export default function DashboardPage() {
               Add your first customer to start sending review requests. 
               It only takes 30 seconds!
             </p>
-            <Button className="mt-4 bg-indigo-600 hover:bg-indigo-700">
+            <Button className="mt-4 bg-indigo-600 hover:bg-indigo-700" onClick={() => router.push("/dashboard/customers")}>
               <Plus className="w-4 h-4 mr-2" />
               Add Your First Customer
             </Button>
