@@ -103,13 +103,20 @@ export default function CustomersPage() {
 
   return (
     <div className="space-y-6 animate-in">
+      {/* Error Banner */}
+      {error && (
+        <div className="p-3 text-sm text-red-600 bg-red-50 rounded-lg border border-red-200">
+          {error}
+        </div>
+      )}
+      
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Customers</h1>
           <p className="text-slate-500 mt-1">Manage your customers</p>
         </div>
-        <Button onClick={() => setShowAddDialog(true)} className="bg-indigo-600 hover:bg-indigo-700">
+        <Button onClick={() => { setShowAddDialog(true); setError(""); }} className="bg-indigo-600 hover:bg-indigo-700">
           <Plus className="w-4 h-4 mr-2" />
           Add Customer
         </Button>
