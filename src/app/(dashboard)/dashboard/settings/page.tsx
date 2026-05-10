@@ -120,6 +120,20 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="font-medium text-slate-900">Negative Review Alerts</p>
+              <p className="text-sm text-slate-500">Instant alerts for 1-2 star reviews so you can respond fast</p>
+            </div>
+            <Switch defaultChecked />
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium text-slate-900">Review Request Responses</p>
+              <p className="text-sm text-slate-500">Get notified when customers respond to review requests</p>
+            </div>
+            <Switch defaultChecked />
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium text-slate-900">Negative Review Alerts</p>
               <p className="text-sm text-slate-500">Immediate alert for 1-2 star reviews</p>
             </div>
             <Switch defaultChecked />
