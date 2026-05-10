@@ -107,9 +107,13 @@ export default function CustomersPage() {
 
   return (
     <div className="space-y-6 animate-in">
-      {/* Error Banner */}
+      {/* Error/Success Banner */}
       {error && (
-        <div className="p-3 text-sm text-red-600 bg-red-50 rounded-lg border border-red-200">
+        <div className={`p-3 text-sm rounded-lg border ${
+          error.includes("Success") 
+            ? "text-emerald-600 bg-emerald-50 border-emerald-200" 
+            : "text-red-600 bg-red-50 border-red-200"
+        }`}>
           {error}
         </div>
       )}
@@ -235,6 +239,7 @@ export default function CustomersPage() {
                               className="gap-1"
                               onClick={() => sendReviewRequest(customer.id)}
                               disabled={sendingTo === customer.id || (!customer.phone && !customer.email)}
+                              title={!customer.phone && !customer.email ? "Add phone or email to customer to send request" : ""}
                             >
                               {sendingTo === customer.id ? (
                                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
