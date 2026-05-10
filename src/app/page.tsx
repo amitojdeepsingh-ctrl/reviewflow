@@ -4,12 +4,21 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { 
   Sparkles, Star, MessageCircle, BarChart3, Zap, ArrowRight, 
-  CheckCircle, Globe, Zap as Zap2, Shield, Clock, Users
+  CheckCircle, Globe, Zap as Zap2, Shield, Clock, Users, Smartphone, Download
 } from "lucide-react";
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white">
+      {/* App Coming Soon Banner */}
+      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-4 text-center">
+        <div className="max-w-6xl mx-auto flex items-center justify-center gap-3">
+          <Smartphone className="w-5 h-5" />
+          <span className="font-medium">Android & iOS App Coming Soon</span>
+          <span className="text-indigo-200 text-sm ml-2">— Manage your reviews on the go!</span>
+        </div>
+      </div>
+
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-slate-100/50 z-50">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
