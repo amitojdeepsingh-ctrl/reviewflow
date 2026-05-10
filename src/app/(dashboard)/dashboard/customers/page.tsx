@@ -73,21 +73,24 @@ export default function CustomersPage() {
     setSendingTo(customerId);
     setError("");
     try {
+      console.log("Sending request for customer:", customerId);
       const res = await fetch("/api/send-review-request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ customerId, method }),
       });
+      console.log("Response status:", res.status);
       const data = await res.json();
+      console.log("Response data:", data);
       if (res.ok) {
         setSentTo([...sentTo, customerId]);
         setTimeout(() => setSentTo(sentTo.filter(id => id !== customerId)), 3000);
       } else {
-        setError(data.error || "Failed to send");
+        setError(`Error (${res.status}): ${data.error || "Failed to send"}`);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error:", err);
-      setError("Network error");
+      setError("Network error: " + err.message);
     } finally {
       setSendingTo(null);
     }
