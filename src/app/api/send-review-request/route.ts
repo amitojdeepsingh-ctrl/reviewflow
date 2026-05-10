@@ -25,6 +25,7 @@ export async function POST(request: Request) {
   
   try {
     const { customerId, method = "sms" } = await request.json();
+    console.log("customerId:", customerId);
 
     // Get customer from database
     const { data: customer, error: customerError } = await supabase
@@ -33,7 +34,12 @@ export async function POST(request: Request) {
       .eq("id", customerId)
       .single();
 
-    if (customerError || !customer) {
+    console.log("customerError:", customerError);
+    if (customerError) {
+      return NextResponse.json({ error: "DB Error: " + customerError.message }, { status: 500 });
+    }
+
+    if (!customer) {
       return NextResponse.json({ error: "Customer not found" }, { status: 404 });
     }
 
