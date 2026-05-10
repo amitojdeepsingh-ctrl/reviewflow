@@ -32,12 +32,26 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [seeding, setSeeding] = useState(false);
   const [stats, setStats] = useState<Stats>({
     totalCustomers: 0,
     totalReviews: 0,
     avgRating: 0,
     pendingRequests: 0
   });
+
+  async function seedTestData() {
+    setSeeding(true);
+    try {
+      const res = await fetch("/api/seed", { method: "POST" });
+      if (res.ok) {
+        window.location.reload();
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    setSeeding(false);
+  }
 
   useEffect(() => {
     if (user) fetchDashboardData();
@@ -150,10 +164,16 @@ export default function DashboardPage() {
               Add your first customer to start sending review requests. 
               It only takes 30 seconds!
             </p>
-            <Button className="mt-4 bg-indigo-600 hover:bg-indigo-700" onClick={() => router.push("/dashboard/customers")}>
-              <Plus className="w-4 h-4 mr-2" />
-              Add Your First Customer
-            </Button>
+            <div className="flex gap-3 justify-center mt-4">
+              <Button className="bg-indigo-600 hover:bg-indigo-700" onClick={() => router.push("/dashboard/customers")}>
+                <Plus className="w-4 h-4 mr-2" />
+                Add Your First Customer
+              </Button>
+              <Button variant="outline" onClick={seedTestData} disabled={seeding}>
+                {seeding ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                Add Test Data
+              </Button>
+            </div>
           </CardContent>
         </Card>
       ) : (
