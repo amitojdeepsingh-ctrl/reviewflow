@@ -48,17 +48,39 @@ export default function SettingsPage() {
     }
     setSaving(true);
     setError("");
+    
+    console.log("Saving for user:", user.id);
+    
+    // First try to update, if not exist then insert
     const { error } = await supabase
       .from("profiles")
-      .upsert({
-        id: user.id,
+      .update({
         company_name: business.company_name,
         phone: business.phone,
         address: business.address
-      });
+      })
+      .eq("id", user.id);
     
+    // If update affected 0 rows, insert
     if (error) {
-      setError(error.message);
+      console.log("Update error:", error);
+      // Try insert instead
+      const { error: insertError } = await supabase
+        .from("profiles")
+        .insert({
+          id: user.id,
+          company_name: business.company_name,
+          phone: business.phone,
+          address: business.address
+        });
+      
+      if (insertError) {
+        console.log("Insert error:", insertError);
+        setError(insertError.message);
+      } else {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
+      }
     } else {
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
