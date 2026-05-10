@@ -15,7 +15,6 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
-  const [status, setStatus] = useState("");
   const [business, setBusiness] = useState({
     company_name: "",
     phone: "",
@@ -49,7 +48,6 @@ export default function SettingsPage() {
     }
     setSaving(true);
     setError("");
-    setStatus("Saving...");
     
     // Insert or update
     const { error } = await supabase
@@ -64,14 +62,9 @@ export default function SettingsPage() {
     if (error) {
       console.error("Save error:", error);
       setError(error.message);
-      setStatus("Failed: " + error.message);
     } else {
       setSaved(true);
-      setStatus("Saved!");
-      setTimeout(() => {
-        setSaved(false);
-        setStatus("");
-      }, 2000);
+      setTimeout(() => setSaved(false), 2000);
     }
     setSaving(false);
   }
@@ -131,8 +124,6 @@ export default function SettingsPage() {
             {saving ? "Saving..." : saved ? "Saved!" : "Save Changes"}
           </Button>
           {error && <p className="text-sm text-red-600 mt-2">{error}</p>}
-          {status && !error && <p className="text-sm text-slate-600 mt-2">{status}</p>}
-          {!user && <p className="text-sm text-amber-600 mt-2">⚠️ Not logged in</p>}
         </CardContent>
       </Card>
 
