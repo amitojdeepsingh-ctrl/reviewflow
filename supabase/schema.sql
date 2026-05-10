@@ -5,6 +5,7 @@ create table public.profiles (
   full_name text,
   company_name text,
   phone text,
+  address text,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );

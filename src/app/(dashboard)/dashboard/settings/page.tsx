@@ -1,13 +1,62 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Building2, User, CreditCard, Bell, Link, CheckCircle } from "lucide-react";
+import { Building2, User, CreditCard, Bell, Link, CheckCircle, Loader2 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
 
 export default function SettingsPage() {
+  const { user } = useAuth();
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [business, setBusiness] = useState({
+    company_name: "",
+    phone: "",
+    address: ""
+  });
+
+  useEffect(() => {
+    if (user) fetchProfile();
+  }, [user]);
+
+  async function fetchProfile() {
+    const { data } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", user?.id)
+      .single();
+    
+    if (data) {
+      setBusiness({
+        company_name: data.company_name || "",
+        phone: data.phone || "",
+        address: data.address || ""
+      });
+    }
+  }
+
+  async function saveProfile() {
+    setSaving(true);
+    const { error } = await supabase
+      .from("profiles")
+      .upsert({
+        id: user?.id,
+        company_name: business.company_name,
+        phone: business.phone,
+        address: business.address
+      });
+    
+    if (!error) {
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    }
+    setSaving(false);
+  }
   return (
     <div className="space-y-6 animate-in max-w-4xl">
       {/* Header */}
@@ -33,18 +82,36 @@ export default function SettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="businessName">Business Name</Label>
-              <Input id="businessName" defaultValue="ABC Plumbing Services" className="mt-1.5" />
+              <Input 
+                id="businessName" 
+                value={business.company_name}
+                onChange={(e) => setBusiness({ ...business, company_name: e.target.value })}
+                className="mt-1.5" 
+              />
             </div>
             <div>
               <Label htmlFor="phone">Phone Number</Label>
-              <Input id="phone" defaultValue="(555) 123-4567" className="mt-1.5" />
+              <Input 
+                id="phone" 
+                value={business.phone}
+                onChange={(e) => setBusiness({ ...business, phone: e.target.value })}
+                className="mt-1.5" 
+              />
             </div>
           </div>
           <div>
             <Label htmlFor="address">Business Address</Label>
-            <Input id="address" defaultValue="123 Main Street, City, State 12345" className="mt-1.5" />
+            <Input 
+              id="address" 
+              value={business.address}
+              onChange={(e) => setBusiness({ ...business, address: e.target.value })}
+              className="mt-1.5" 
+            />
           </div>
-          <Button className="bg-indigo-600">Save Changes</Button>
+          <Button className="bg-indigo-600" onClick={saveProfile} disabled={saving}>
+            {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : saved ? <CheckCircle className="w-4 h-4 mr-2" /> : null}
+            {saving ? "Saving..." : saved ? "Saved!" : "Save Changes"}
+          </Button>
         </CardContent>
       </Card>
 
@@ -74,10 +141,10 @@ export default function SettingsPage() {
               </div>
               <div>
                 <p className="font-medium text-slate-900">Google Business Profile</p>
-                <p className="text-sm text-slate-500">Connected • 189 reviews synced</p>
+                <p className="text-sm text-slate-500">Not connected</p>
               </div>
             </div>
-            <Button variant="outline" size="sm">Manage</Button>
+            <Button variant="outline" size="sm">Connect</Button>
           </div>
           <div className="flex items-center justify-between p-4 border border-slate-200 rounded-lg">
             <div className="flex items-center gap-4">
