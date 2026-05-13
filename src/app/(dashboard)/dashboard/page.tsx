@@ -138,10 +138,10 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
-          <p className="text-slate-500 mt-1">Welcome back! Here's your review overview.</p>
+          <p className="text-slate-500 mt-1">Welcome back! Here&apos;s your review overview.</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2" onClick={() => router.push("/dashboard/reviews")}>
             <ExternalLink className="w-4 h-4" />
             View Live Reviews
           </Button>
@@ -223,7 +223,7 @@ export default function DashboardPage() {
               <CardContent className="p-6">
                 <h3 className="font-semibold text-lg">Send Review Requests</h3>
                 <p className="text-indigo-100 text-sm mt-1">Reach out to your customers for reviews</p>
-                <Button className="mt-4 bg-white text-indigo-600 hover:bg-indigo-50">
+                <Button className="mt-4 bg-white text-indigo-600 hover:bg-indigo-50" onClick={() => router.push("/dashboard/customers")}>
                   Go to Customers
                 </Button>
               </CardContent>
@@ -232,7 +232,7 @@ export default function DashboardPage() {
               <CardContent className="p-6">
                 <h3 className="font-semibold text-lg">Check Reviews</h3>
                 <p className="text-emerald-100 text-sm mt-1">See what customers are saying</p>
-                <Button className="mt-4 bg-white text-emerald-600 hover:bg-emerald-50">
+                <Button className="mt-4 bg-white text-emerald-600 hover:bg-emerald-50" onClick={() => router.push("/dashboard/reviews")}>
                   View Reviews
                 </Button>
               </CardContent>
@@ -241,7 +241,7 @@ export default function DashboardPage() {
               <CardContent className="p-6">
                 <h3 className="font-semibold text-lg">Analyze Performance</h3>
                 <p className="text-amber-100 text-sm mt-1">Track your rating and growth</p>
-                <Button className="mt-4 bg-white text-amber-600 hover:bg-amber-50">
+                <Button className="mt-4 bg-white text-amber-600 hover:bg-amber-50" onClick={() => router.push("/dashboard/analytics")}>
                   View Analytics
                 </Button>
               </CardContent>

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Send, Users, Clock, CheckCircle, XCircle, MessageCircle, Mail, RefreshCw, Loader2 } from "lucide-react";
@@ -17,22 +18,24 @@ interface ReviewRequest {
 }
 
 export default function RequestsPage() {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState<ReviewRequest[]>([]);
   const [filter, setFilter] = useState<"all" | "pending" | "responded">("all");
+  const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    fetchRequests();
-  }, []);
-
-  async function fetchRequests() {
+  const fetchRequests = useCallback(async () => {
     const { data } = await supabase
       .from("review_requests")
       .select("*")
       .order("created_at", { ascending: false });
     setRequests(data || []);
     setLoading(false);
-  }
+  }, []);
+
+  useEffect(() => {
+    fetchRequests();
+  }, [fetchRequests]);
 
   if (loading) {
     return (
@@ -49,8 +52,9 @@ export default function RequestsPage() {
     filter === "pending" ? pendingRequests : respondedRequests;
 
   const sentCount = requests.filter(r => r.status === 'sent').length;
-  const deliveredCount = requests.filter(r => r.status === 'delivered').length;
-  const clickedCount = requests.filter(r => r.status === 'clicked').length;
+  const pendingCount = requests.filter(r => r.status === 'pending').length;
+  const respondedCount = requests.filter(r => r.status === 'responded').length;
+  const failedCount = requests.filter(r => r.status === 'failed').length;
 
   return (
     <div className="space-y-6 animate-in">
@@ -61,15 +65,20 @@ export default function RequestsPage() {
           <p className="text-slate-500 mt-1">Track your review request history</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2" onClick={() => { setMessage("Email blast coming soon!"); setTimeout(() => setMessage(""), 3000); }}>
             <Mail className="w-4 h-4" />
             Email Blast
           </Button>
-          <Button className="bg-indigo-600 hover:bg-indigo-700">
+          <Button className="bg-indigo-600 hover:bg-indigo-700" onClick={() => router.push("/dashboard/customers")}>
             <Send className="w-4 h-4 mr-2" />
             New Request
           </Button>
         </div>
+        {message && (
+          <div className="p-3 text-sm text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg mt-2">
+            {message}
+          </div>
+        )}
       </div>
 
       {/* Stats */}
@@ -94,8 +103,8 @@ export default function RequestsPage() {
                 <CheckCircle className="w-6 h-6 text-emerald-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-slate-900">{deliveredCount}</p>
-                <p className="text-sm text-slate-500">Delivered</p>
+                <p className="text-2xl font-bold text-slate-900">{respondedCount}</p>
+                <p className="text-sm text-slate-500">Responded</p>
               </div>
             </div>
           </CardContent>
@@ -107,21 +116,21 @@ export default function RequestsPage() {
                 <Clock className="w-6 h-6 text-amber-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-slate-900">{pendingRequests.length}</p>
+                <p className="text-2xl font-bold text-slate-900">{pendingCount}</p>
                 <p className="text-sm text-slate-500">Pending</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-to-br from-indigo-500 to-purple-500 text-white">
+        <Card className="bg-gradient-to-br from-red-500 to-orange-500 text-white">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-                <RefreshCw className="w-6 h-6" />
+                <XCircle className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{clickedCount}</p>
-                <p className="text-sm text-indigo-200">Clicked</p>
+                <p className="text-2xl font-bold">{failedCount}</p>
+                <p className="text-sm text-red-200">Failed</p>
               </div>
             </div>
           </CardContent>

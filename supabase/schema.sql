@@ -6,6 +6,8 @@ create table public.profiles (
   company_name text,
   phone text,
   address text,
+  google_connected boolean default false,
+  facebook_connected boolean default false,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
@@ -79,12 +81,33 @@ create policy "Users can CRUD own reviews" on public.reviews
 create policy "Users can CRUD own review_requests" on public.review_requests
   for all using (auth.uid() = user_id);
 
--- Create indexes for performance
+-- Indexes
 create index idx_customers_user_id on public.customers(user_id);
 create index idx_reviews_user_id on public.reviews(user_id);
 create index idx_reviews_platform on public.reviews(platform);
 create index idx_review_requests_user_id on public.review_requests(user_id);
 create index idx_review_requests_status on public.review_requests(status);
+create index idx_integration_tokens_user on public.integration_tokens(user_id);
+
+-- Table for storing OAuth integration tokens
+create table public.integration_tokens (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references auth.users on delete cascade not null,
+  platform text not null check (platform in ('google', 'facebook')),
+  access_token text not null,
+  refresh_token text,
+  token_expires_at timestamptz,
+  platform_user_id text,
+  platform_page_id text,
+  platform_business_name text,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  unique(user_id, platform)
+);
+
+alter table public.integration_tokens enable row level security;
+create policy "Users can access own tokens" on public.integration_tokens
+  for all using (auth.uid() = user_id);
 
 -- Trigger to create profile on user signup
 create or replace function public.handle_new_user()
@@ -99,3 +122,34 @@ $$ language plpgsql security definer;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
+
+-- Drop all possible versions of functions
+DROP FUNCTION IF EXISTS get_customer(uuid);
+DROP FUNCTION IF EXISTS create_review_request();
+DROP FUNCTION IF EXISTS create_review_request(uuid);
+DROP FUNCTION IF EXISTS create_review_request(uuid, uuid);
+DROP FUNCTION IF EXISTS create_review_request(uuid, uuid, text);
+DROP FUNCTION IF EXISTS create_review_request(uuid, uuid, text, text);
+DROP FUNCTION IF EXISTS create_review_request(uuid, uuid, text, text, text);
+
+-- Recreate functions
+CREATE OR REPLACE FUNCTION get_customer(p_customer_id uuid)
+RETURNS TABLE (id uuid, user_id uuid, name text, phone text, email text)
+LANGUAGE plpgsql SECURITY DEFINER AS $$
+BEGIN
+  RETURN QUERY SELECT c.id, c.user_id, c.name, c.phone, c.email FROM customers c WHERE c.id = p_customer_id;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION create_review_request(
+  p_user_id uuid, p_customer_id uuid, p_status text, p_method text, p_message text
+)
+RETURNS uuid LANGUAGE plpgsql SECURITY DEFINER AS $$
+DECLARE v_id uuid;
+BEGIN
+  INSERT INTO review_requests (user_id, customer_id, status, request_method, message, sent_at)
+  VALUES (p_user_id, p_customer_id, p_status, p_method, p_message, now())
+  RETURNING id INTO v_id;
+  RETURN v_id;
+END;
+$$;

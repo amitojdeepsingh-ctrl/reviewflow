@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star, Search, Filter, MoreHorizontal, ExternalLink, AlertTriangle, CheckCircle, Clock, Loader2, MessageCircle } from "lucide-react";
+import { Star, Search, Filter, MoreHorizontal, ExternalLink, AlertTriangle, CheckCircle, Clock, Loader2, MessageCircle, Sparkles } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Review {
   id: string;
@@ -16,13 +17,24 @@ interface Review {
 }
 
 export default function ReviewsPage() {
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [filter, setFilter] = useState("All");
+  const [showFilters, setShowFilters] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [aiLoading, setAiLoading] = useState<string | null>(null);
+  const [aiSuggestions, setAiSuggestions] = useState<Record<string, string>>({});
+  const [businessName, setBusinessName] = useState("");
 
   useEffect(() => {
     fetchReviews();
-  }, []);
+    if (user) {
+      supabase.from("profiles").select("company_name").eq("id", user.id).single().then(({ data }) => {
+        if (data) setBusinessName(data.company_name || "");
+      });
+    }
+  }, [user]);
 
   async function fetchReviews() {
     const { data } = await supabase
@@ -31,6 +43,22 @@ export default function ReviewsPage() {
       .order("created_at", { ascending: false });
     setReviews(data || []);
     setLoading(false);
+  }
+
+  async function suggestResponse(reviewId: string, content: string, rating: number) {
+    setAiLoading(reviewId);
+    try {
+      const res = await fetch("/api/ai/suggest-response", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reviewContent: content, rating, businessName }),
+      });
+      const data = await res.json();
+      setAiSuggestions(prev => ({ ...prev, [reviewId]: data.suggestion }));
+    } catch {
+      setAiSuggestions(prev => ({ ...prev, [reviewId]: "Thank you for your feedback!" }));
+    }
+    setAiLoading(null);
   }
 
   if (loading) {
@@ -45,6 +73,10 @@ export default function ReviewsPage() {
   const needsResponse = reviews.filter(r => !r.responded);
 
   const filterOptions = ["All", "5 Star", "4 Star", "3 Star", "2 Star", "1 Star", "Negative"];
+
+  const filteredReviews = searchQuery
+    ? reviews.filter(r => r.content?.toLowerCase().includes(searchQuery.toLowerCase()))
+    : reviews;
 
   return (
     <div className="space-y-6 animate-in">
@@ -68,7 +100,7 @@ export default function ReviewsPage() {
               <p className="text-sm text-red-700">Respond quickly to resolve these issues</p>
             </div>
           </div>
-          <Button variant="outline" className="border-red-300 text-red-700 hover:bg-red-100">
+          <Button variant="outline" className="border-red-300 text-red-700 hover:bg-red-100" onClick={() => setFilter("Negative")}>
             View Negative Reviews
           </Button>
         </div>
@@ -125,10 +157,12 @@ export default function ReviewsPage() {
           <input
             type="text"
             placeholder="Search reviews..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           />
         </div>
-        <Button variant="outline" className="gap-2">
+        <Button variant="outline" className="gap-2" onClick={() => setShowFilters(!showFilters)}>
           <Filter className="w-4 h-4" />
           Filters
         </Button>
@@ -152,7 +186,7 @@ export default function ReviewsPage() {
       </div>
 
       {/* Reviews List */}
-      {reviews.length === 0 ? (
+      {filteredReviews.length === 0 ? (
         <Card>
           <CardContent className="p-12 text-center">
             <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
@@ -166,7 +200,7 @@ export default function ReviewsPage() {
         <Card>
           <CardContent className="p-0">
             <div className="divide-y divide-slate-100">
-              {reviews.map((review) => {
+              {filteredReviews.map((review) => {
                 const isNegative = review.rating <= 2;
                 const showCard = filter === "All" || 
                   (filter === "Negative" && isNegative) ||
@@ -219,6 +253,31 @@ export default function ReviewsPage() {
                             <span className="text-sm text-amber-600 font-medium">Needs response</span>
                           )}
                         </div>
+                        {!review.responded && (
+                          <div className="mt-3">
+                            {aiSuggestions[review.id] ? (
+                              <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-3 text-sm text-slate-700">
+                                <p className="font-medium text-indigo-700 text-xs mb-1">AI Suggested Response:</p>
+                                <p>{aiSuggestions[review.id]}</p>
+                              </div>
+                            ) : (
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="gap-1 text-xs" 
+                                onClick={() => suggestResponse(review.id, review.content || "", review.rating)}
+                                disabled={aiLoading === review.id}
+                              >
+                                {aiLoading === review.id ? (
+                                  <Loader2 className="w-3 h-3 animate-spin" />
+                                ) : (
+                                  <Sparkles className="w-3 h-3" />
+                                )}
+                                AI Suggest Response
+                              </Button>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

@@ -12,6 +12,7 @@ import {
   Settings,
   Sparkles,
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -24,6 +25,10 @@ const navigation = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { profile, user } = useAuth();
+  const displayName = profile?.company_name || profile?.full_name || user?.email?.split('@')[0] || "User";
+  const initials = displayName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+  const email = user?.email || "";
 
   return (
     <aside className="w-64 bg-white border-r border-slate-200 flex flex-col">
@@ -76,11 +81,11 @@ export function Sidebar() {
       <div className="p-4 border-t border-slate-100">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-sm font-medium">
-            JD
+            {initials || "U"}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-slate-900 truncate">John Doe</p>
-            <p className="text-xs text-slate-500 truncate">john@business.com</p>
+            <p className="text-sm font-medium text-slate-900 truncate">{displayName}</p>
+            <p className="text-xs text-slate-500 truncate">{email}</p>
           </div>
         </div>
       </div>
