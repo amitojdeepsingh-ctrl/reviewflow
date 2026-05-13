@@ -18,7 +18,7 @@ export async function sendReviewEmail(
     return { success: false, error: "Email not configured" };
   }
 
-  const fromEmail = process.env.RESEND_FROM_EMAIL || "reviews@reviewflow.app";
+  const fromEmail = process.env.RESEND_FROM_EMAIL || "reviews@reviewmanager.pro";
 
   try {
     const { error } = await resend.emails.send({

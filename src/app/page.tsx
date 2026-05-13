@@ -26,7 +26,7 @@ export default function LandingPage() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
-            <span className="text-lg font-bold text-slate-900">ReviewFlow</span>
+            <span className="text-lg font-bold text-slate-900">ReviewManager</span>
           </div>
           <nav className="flex items-center gap-8">
             <Link href="#features" className="text-sm text-slate-500 hover:text-slate-900 transition-colors">Features</Link>
@@ -67,7 +67,7 @@ export default function LandingPage() {
           
           <p className="text-xl text-slate-500 mt-8 max-w-2xl mx-auto leading-relaxed animate-fade-in stagger-2">
             Stop losing customers to competitors with better reviews. 
-            ReviewFlow helps local businesses get more reviews with less effort — 
+            ReviewManager helps local businesses get more reviews with less effort — 
             automated, simple, and effective.
           </p>
           
@@ -259,9 +259,9 @@ export default function LandingPage() {
             <div className="w-6 h-6 rounded bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-white" />
             </div>
-            <span className="font-semibold text-slate-900">ReviewFlow</span>
+            <span className="font-semibold text-slate-900">ReviewManager</span>
           </div>
-          <p className="text-sm text-slate-400">© 2026 ReviewFlow. All rights reserved.</p>
+          <p className="text-sm text-slate-400">© 2026 ReviewManager. All rights reserved.</p>
         </div>
       </footer>
     </div>

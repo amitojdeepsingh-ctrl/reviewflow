@@ -159,7 +159,7 @@ export default function DashboardPage() {
             <div className="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center mx-auto mb-4">
               <Users className="w-8 h-8 text-indigo-600" />
             </div>
-            <h3 className="text-lg font-semibold text-slate-900">Get Started with ReviewFlow</h3>
+            <h3 className="text-lg font-semibold text-slate-900">Get Started with ReviewManager</h3>
             <p className="text-slate-500 mt-2 max-w-md mx-auto">
               Add your first customer to start sending review requests. 
               It only takes 30 seconds!

@@ -95,7 +95,7 @@ function OnboardingContent() {
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mx-auto mb-4">
             <Sparkles className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-slate-900">Welcome to ReviewFlow</h1>
+          <h1 className="text-3xl font-bold text-slate-900">Welcome to ReviewManager</h1>
           <p className="text-slate-500 mt-2">Get started in 3 easy steps</p>
         </div>
 

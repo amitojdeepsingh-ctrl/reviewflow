@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "ReviewFlow - Get More 5-Star Reviews",
+  title: "ReviewManager - Get More 5-Star Reviews",
   description: "The simplest way to get more 5-star reviews for your local business.",
 };
 
