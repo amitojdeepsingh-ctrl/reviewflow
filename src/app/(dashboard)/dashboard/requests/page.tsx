@@ -69,7 +69,7 @@ export default function RequestsPage() {
             <Mail className="w-4 h-4" />
             Email Blast
           </Button>
-          <Button className="bg-indigo-600 hover:bg-indigo-700" onClick={() => router.push("/dashboard/customers")}>
+          <Button className="bg-[#7C3AED] hover:bg-[#6D28D9]" onClick={() => router.push("/dashboard/customers")}>
             <Send className="w-4 h-4 mr-2" />
             New Request
           </Button>

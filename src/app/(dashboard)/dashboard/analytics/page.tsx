@@ -165,7 +165,7 @@ export default function AnalyticsPage() {
                       </div>
                       <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                         <div 
-                          className="h-full bg-indigo-600 rounded-full"
+                          className="h-full bg-[#7C3AED] rounded-full"
                           style={{ width: `${platform.percentage}%` }}
                         />
                       </div>

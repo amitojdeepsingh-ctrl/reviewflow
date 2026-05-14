@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -127,11 +127,13 @@ export default function SettingsPage() {
   }
 
   // Check OAuth callback result from URL params
+  const mounted = useRef(false);
   useEffect(() => {
+    mounted.current = true;
+    if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
     const isOAuthReturn = params.get('success') || params.get('error');
     if (isOAuthReturn) {
-      // Don't fetch integrations from server — use callback state
       window.history.replaceState({}, '', '/dashboard/settings');
     } else if (user) {
       fetchProfile();
@@ -141,6 +143,7 @@ export default function SettingsPage() {
 
   // Handle OAuth callback params
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
     const success = params.get('success');
     const err = params.get('error');
@@ -231,7 +234,7 @@ export default function SettingsPage() {
         <CardHeader>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center">
-              <Building2 className="w-5 h-5 text-indigo-600" />
+              <Building2 className="w-5 h-5 text-[#7C3AED]" />
             </div>
             <div>
               <CardTitle className="text-lg">Business Profile</CardTitle>
@@ -307,10 +310,10 @@ export default function SettingsPage() {
               </div>
             )}
             <p className="text-xs text-slate-400 mt-1">
-              Search for your business above, or find your <a href="https://developers.google.com/maps/documentation/places/web-service/place-id" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">Place ID manually</a>
+              Search for your business above, or find your <a href="https://developers.google.com/maps/documentation/places/web-service/place-id" target="_blank" rel="noopener noreferrer" className="text-[#7C3AED] hover:underline">Place ID manually</a>
             </p>
           </div>
-          <Button className="bg-indigo-600" onClick={saveProfile} disabled={saving}>
+          <Button className="bg-[#7C3AED]" onClick={saveProfile} disabled={saving}>
             {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : saved ? <CheckCircle className="w-4 h-4 mr-2" /> : null}
             {saving ? "Saving..." : saved ? "Saved!" : "Save Changes"}
           </Button>
@@ -351,7 +354,7 @@ export default function SettingsPage() {
           </div>
           <div className="bg-indigo-50 rounded-lg p-3 text-sm text-indigo-700">
             <p className="font-medium mb-1">Preview:</p>
-            <p className="text-indigo-600">
+            <p className="text-[#7C3AED]">
               {business.sms_template
                 .replace(/\{name\}/g, "John")
                 .replace(/\{business_name\}/g, business.company_name || "Your Business")
@@ -527,7 +530,7 @@ export default function SettingsPage() {
                 Manage Billing
               </Button>
             ) : (
-              <Button className="bg-indigo-600 hover:bg-indigo-700" onClick={startCheckout} disabled={billingLoading}>
+              <Button className="bg-[#7C3AED] hover:bg-[#6D28D9]" onClick={startCheckout} disabled={billingLoading}>
                 {billingLoading ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : null}
                 Subscribe — $39/mo
               </Button>

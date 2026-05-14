@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Fira_Code, Fira_Sans } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
+const firaCode = Fira_Code({ subsets: ["latin"], variable: "--font-fira-code" });
+const firaSans = Fira_Sans({ 
+  subsets: ["latin"], 
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-fira-sans" 
+});
 
 export const metadata: Metadata = {
   title: "ReviewManager - Get More 5-Star Reviews",
@@ -16,7 +22,7 @@ export default function PublicLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} ${firaCode.variable} ${firaSans.variable}`}>
         {children}
       </body>
     </html>

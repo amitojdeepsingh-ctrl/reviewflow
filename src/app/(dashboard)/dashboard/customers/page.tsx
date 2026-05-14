@@ -100,7 +100,7 @@ export default function CustomersPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#7C3AED]" />
       </div>
     );
   }
@@ -124,7 +124,7 @@ export default function CustomersPage() {
           <h1 className="text-2xl font-bold text-slate-900">Customers</h1>
           <p className="text-slate-500 mt-1">Manage your customers</p>
         </div>
-        <Button onClick={() => { setShowAddDialog(true); setError(""); }} className="bg-indigo-600 hover:bg-indigo-700">
+        <Button onClick={() => { setShowAddDialog(true); setError(""); }} className="bg-[#7C3AED] hover:bg-[#6D28D9]">
           <Plus className="w-4 h-4 mr-2" />
           Add Customer
         </Button>
@@ -177,7 +177,7 @@ export default function CustomersPage() {
             </div>
             <h3 className="text-lg font-semibold text-slate-900">No customers yet</h3>
             <p className="text-slate-500 mt-2">Add your first ADS Immigration customer to get started</p>
-            <Button onClick={() => setShowAddDialog(true)} className="mt-4 bg-indigo-600">
+            <Button onClick={() => setShowAddDialog(true)} className="mt-4 bg-[#7C3AED]">
               Add First Customer
             </Button>
           </CardContent>
@@ -314,7 +314,7 @@ export default function CustomersPage() {
               <Button variant="outline" onClick={() => setShowAddDialog(false)} className="flex-1">
                 Cancel
               </Button>
-              <Button onClick={addCustomer} disabled={adding} className="flex-1 bg-indigo-600">
+              <Button onClick={addCustomer} disabled={adding} className="flex-1 bg-[#7C3AED]">
                 {adding ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
                 {adding ? "Adding..." : "Add Customer"}
               </Button>

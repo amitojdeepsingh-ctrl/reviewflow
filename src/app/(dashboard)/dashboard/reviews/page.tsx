@@ -64,7 +64,7 @@ export default function ReviewsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#7C3AED]" />
       </div>
     );
   }
@@ -83,7 +83,7 @@ export default function ReviewsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Reviews</h1>
+          <h1 className="text-2xl font-bold text-[#4C1D95]">Reviews</h1>
           <p className="text-slate-500 mt-1">Manage and respond to all your reviews</p>
         </div>
       </div>
@@ -176,7 +176,7 @@ export default function ReviewsPage() {
             onClick={() => setFilter(option)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               filter === option
-                ? "bg-indigo-600 text-white"
+                ? "bg-[#7C3AED] text-white"
                 : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200"
             }`}
           >

@@ -11,11 +11,9 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   ExternalLink,
-  ThumbsUp,
   Plus,
   Users,
-  Loader2,
-  AlertTriangle
+  Loader2
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
@@ -60,21 +58,9 @@ export default function DashboardPage() {
   async function fetchDashboardData() {
     setLoading(true);
     
-    // Fetch customers
-    const { data: customers } = await supabase
-      .from("customers")
-      .select("id");
-
-    // Fetch reviews
-    const { data: reviews } = await supabase
-      .from("reviews")
-      .select("rating");
-
-    // Fetch pending requests
-    const { data: requests } = await supabase
-      .from("review_requests")
-      .select("id")
-      .eq("status", "pending");
+    const { data: customers } = await supabase.from("customers").select("id");
+    const { data: reviews } = await supabase.from("reviews").select("rating");
+    const { data: requests } = await supabase.from("review_requests").select("id").eq("status", "pending");
 
     const avgRating = reviews?.length 
       ? reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.length 
@@ -92,7 +78,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#7C3AED]" />
       </div>
     );
   }
@@ -133,43 +119,41 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="space-y-6 animate-in">
-      {/* Header */}
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
-          <p className="text-slate-500 mt-1">Welcome back! Here&apos;s your review overview.</p>
+          <h1 className="text-2xl font-bold text-[#4C1D95]">Dashboard</h1>
+          <p className="text-slate-600 mt-1">Welcome back! Here&apos;s your review overview.</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="gap-2" onClick={() => router.push("/dashboard/reviews")}>
+          <Button variant="outline" className="gap-2 cursor-pointer" onClick={() => router.push("/dashboard/reviews")}>
             <ExternalLink className="w-4 h-4" />
             View Live Reviews
           </Button>
-          <Button className="bg-indigo-600 hover:bg-indigo-700 gap-2" onClick={() => router.push("/dashboard/customers")}>
+          <Button className="bg-[#7C3AED] hover:bg-[#6D28D9] gap-2" onClick={() => router.push("/dashboard/customers")}>
             <Plus className="w-4 h-4" />
             Add Customer
           </Button>
         </div>
       </div>
 
-      {/* Empty State */}
       {stats.totalCustomers === 0 ? (
         <Card>
           <CardContent className="p-12 text-center">
-            <div className="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center mx-auto mb-4">
-              <Users className="w-8 h-8 text-indigo-600" />
+            <div className="w-16 h-16 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mx-auto mb-4">
+              <Users className="w-8 h-8 text-[#7C3AED]" />
             </div>
-            <h3 className="text-lg font-semibold text-slate-900">Get Started with ReviewManager</h3>
-            <p className="text-slate-500 mt-2 max-w-md mx-auto">
+            <h3 className="text-lg font-semibold text-[#4C1D95]">Get Started with ReviewManager</h3>
+            <p className="text-slate-600 mt-2 max-w-md mx-auto">
               Add your first customer to start sending review requests. 
               It only takes 30 seconds!
             </p>
             <div className="flex gap-3 justify-center mt-4">
-              <Button className="bg-indigo-600 hover:bg-indigo-700" onClick={() => router.push("/dashboard/customers")}>
+              <Button className="bg-[#7C3AED] hover:bg-[#6D28D9]" onClick={() => router.push("/dashboard/customers")}>
                 <Plus className="w-4 h-4 mr-2" />
                 Add Your First Customer
               </Button>
-              <Button variant="outline" onClick={seedTestData} disabled={seeding}>
+              <Button variant="outline" onClick={seedTestData} disabled={seeding} className="cursor-pointer">
                 {seeding ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
                 Add Test Data
               </Button>
@@ -178,15 +162,14 @@ export default function DashboardPage() {
         </Card>
       ) : (
         <>
-          {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {statCards.map((stat, i) => (
-              <Card key={i}>
+              <Card key={i} className="cursor-pointer hover:border-[#7C3AED] transition-colors">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-slate-500">{stat.label}</p>
-                      <p className="text-3xl font-bold text-slate-900 mt-2">{stat.value}</p>
+                      <p className="text-sm text-slate-600">{stat.label}</p>
+                      <p className="text-3xl font-bold text-[#4C1D95] mt-2">{stat.value}</p>
                       <p className={`text-sm mt-2 flex items-center gap-1 ${
                         stat.trend === "up" ? "text-emerald-600" : 
                         stat.trend === "down" ? "text-red-600" : "text-slate-400"
@@ -217,18 +200,17 @@ export default function DashboardPage() {
             ))}
           </div>
 
-          {/* Quick Actions */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="bg-gradient-to-br from-indigo-500 to-purple-500 text-white">
+            <Card className="bg-[#7C3AED] text-white cursor-pointer hover:bg-[#6D28D9] transition-colors">
               <CardContent className="p-6">
                 <h3 className="font-semibold text-lg">Send Review Requests</h3>
-                <p className="text-indigo-100 text-sm mt-1">Reach out to your customers for reviews</p>
-                <Button className="mt-4 bg-white text-indigo-600 hover:bg-indigo-50" onClick={() => router.push("/dashboard/customers")}>
+                <p className="text-violet-200 text-sm mt-1">Reach out to your customers for reviews</p>
+                <Button className="mt-4 bg-white text-[#7C3AED] hover:bg-violet-50" onClick={() => router.push("/dashboard/customers")}>
                   Go to Customers
                 </Button>
               </CardContent>
             </Card>
-            <Card className="bg-gradient-to-br from-emerald-500 to-teal-500 text-white">
+            <Card className="bg-emerald-600 text-white cursor-pointer hover:bg-emerald-700 transition-colors">
               <CardContent className="p-6">
                 <h3 className="font-semibold text-lg">Check Reviews</h3>
                 <p className="text-emerald-100 text-sm mt-1">See what customers are saying</p>
@@ -237,11 +219,11 @@ export default function DashboardPage() {
                 </Button>
               </CardContent>
             </Card>
-            <Card className="bg-gradient-to-br from-amber-500 to-orange-500 text-white">
+            <Card className="bg-[#F97316] text-white cursor-pointer hover:bg-[#EA580C] transition-colors">
               <CardContent className="p-6">
                 <h3 className="font-semibold text-lg">Analyze Performance</h3>
-                <p className="text-amber-100 text-sm mt-1">Track your rating and growth</p>
-                <Button className="mt-4 bg-white text-amber-600 hover:bg-amber-50" onClick={() => router.push("/dashboard/analytics")}>
+                <p className="text-orange-100 text-sm mt-1">Track your rating and growth</p>
+                <Button className="mt-4 bg-white text-[#F97316] hover:bg-orange-50" onClick={() => router.push("/dashboard/analytics")}>
                   View Analytics
                 </Button>
               </CardContent>
